@@ -7,7 +7,13 @@
 #define SS_PIN 53
 #define RST_PIN 49
 
+#define VRx A0
+#define VRy A1 
+#define AnalogButton 22
+
 bool state;
+float vX, vY;
+int B;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Create LCD instance
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
@@ -32,11 +38,6 @@ void setup()
 
   Serial.begin(9600);
 
-  while (!Serial)
-    ;
-
-  Serial.println("\nI2c Scanner");
-
   SPI.begin();        // Init SPI bus
   mfrc522.PCD_Init(); // Init MFRC522 module
 
@@ -45,11 +46,33 @@ void setup()
   lcd.setCursor(0, 0);
 
   state = false;
+  //Output Input definition
   pinMode(LED_BUILTIN, OUTPUT);
+  // pinMode(VRx, INPUT);
+  // pinMode(VRy, INPUT);
+  pinMode(AnalogButton, INPUT);
+
 }
 
 void loop()
 {
+
+  vX = analogRead(VRx);
+  vY = analogRead(VRy);
+  B = digitalRead(AnalogButton);
+
+  Serial.println(" Vx | Vy | B ");
+  Serial.print(" ");
+  Serial.print(vX);
+  Serial.print(" | ");
+  Serial.print(vY);
+  Serial.print(" | ");
+  Serial.print(B);
+
+  Serial.println("");
+
+  
+
 
   if (mfrc522.PICC_IsNewCardPresent())
   {
@@ -62,5 +85,5 @@ void loop()
   }
 
 
-  delay(300);
+  delay(1000);
 }
