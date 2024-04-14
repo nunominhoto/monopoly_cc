@@ -3,6 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <MFRC522.h>
+#include <Keypad.h>
 
 #define SS_PIN 53
 #define RST_PIN 49
@@ -14,6 +15,21 @@
 bool state;
 float vX, vY;
 int B;
+
+const byte ROWS = 4; 
+const byte COLS = 4; 
+
+char hexaKeys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte rowPins[ROWS] = {22, 24, 26, 28}; 
+byte colPins[COLS] = {23, 25, 27, 29}; 
+
+Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Create LCD instance
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
@@ -57,22 +73,26 @@ void setup()
 void loop()
 {
 
-  vX = analogRead(VRx);
-  vY = analogRead(VRy);
-  B = digitalRead(AnalogButton);
+  // vX = analogRead(VRx);
+  // vY = analogRead(VRy);
+  // B = digitalRead(AnalogButton);
 
-  Serial.println(" Vx | Vy | B ");
-  Serial.print(" ");
-  Serial.print(vX);
-  Serial.print(" | ");
-  Serial.print(vY);
-  Serial.print(" | ");
-  Serial.print(B);
+  // Serial.println(" Vx | Vy | B ");
+  // Serial.print(" ");
+  // Serial.print(vX);
+  // Serial.print(" | ");
+  // Serial.print(vY);
+  // Serial.print(" | ");
+  // Serial.print(B);
 
-  Serial.println("");
+  // Serial.println("");
 
   
-
+  char customKey = customKeypad.getKey();
+  
+  if (customKey){
+    Serial.println(customKey);
+  }
 
   if (mfrc522.PICC_IsNewCardPresent())
   {
@@ -84,6 +104,4 @@ void loop()
     }
   }
 
-
-  delay(1000);
 }
